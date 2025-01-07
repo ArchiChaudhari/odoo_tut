@@ -7,24 +7,7 @@ ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL C.UTF-8
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libxml2-dev \
-    libxslt1-dev \
-    zlib1g-dev \
-    libsasl2-dev \
-    libldap2-dev \
-    libssl-dev \
-    libmysqlclient-dev \
-    libjpeg-dev \
-    libjpeg8-dev \
-    liblcms2-dev \
-    libblas-dev \
-    libatl.10.12as-base-dev \
-    libpq-dev \
-    git \
-    nano \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update 
 
 # Set the working directory inside the container
 WORKDIR /mnt/odoo
