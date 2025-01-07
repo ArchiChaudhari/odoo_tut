@@ -19,7 +19,7 @@ RUN ls -la /mnt/odoo
 
 # Install Python dependencies from the correct path (inside the 'odoo' directory)
 RUN pip install --upgrade pip
-RUN pip install -r /mnt/odoo/odoo/requirements.txt --verbose
+RUN pip install -r /mnt/odoo/requirements.txt --verbose
 
 # Expose the necessary port
 EXPOSE 8069
