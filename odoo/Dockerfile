@@ -8,7 +8,6 @@ ENV LC_ALL C.UTF-8
 
 # Install system dependencies
 RUN apt-get update 
-
 # Set the working directory inside the container
 WORKDIR /mnt/odoo
 
