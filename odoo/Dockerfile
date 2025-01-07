@@ -7,7 +7,8 @@ ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL C.UTF-8
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update 
+RUN apt-get install -y \
     build-essential \
     python3-dev \
     cython \
