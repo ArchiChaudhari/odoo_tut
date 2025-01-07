@@ -15,10 +15,10 @@ WORKDIR /mnt/odoo
 # Copy the current directory contents into the container (including requirements.txt)
 COPY . /mnt/odoo
 
-# Verify that requirements.txt is in place
-RUN ls -la /mnt/odoo/odoo
+# List the contents of /mnt/odoo to verify the structure
+RUN ls -la /mnt/odoo
 
-# Install Python dependencies from requirements.txt (inside the 'odoo' folder)
+# Install Python dependencies from the correct path (inside the 'odoo' directory)
 RUN pip install --upgrade pip
 RUN pip install -r /mnt/odoo/odoo/requirements.txt --verbose
 
