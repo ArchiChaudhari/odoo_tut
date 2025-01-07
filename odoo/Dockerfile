@@ -12,15 +12,18 @@ RUN apt-get update
 # Set the working directory inside the container
 WORKDIR /mnt/odoo
 
-# Copy the current directory contents into the container
+# Copy the current directory contents into the container (including requirements.txt)
 COPY . /mnt/odoo
 
-# Install Python dependencies from requirements.txt
+# Verify that requirements.txt is in place
+RUN ls -la /mnt/odoo/odoo
+
+# Install Python dependencies from requirements.txt (inside the 'odoo' folder)
 RUN pip install --upgrade pip
-RUN pip install -r /mnt/odoo/requirements.txt
+RUN pip install -r /mnt/odoo/odoo/requirements.txt --verbose
 
 # Expose the necessary port
 EXPOSE 8069
 
 # Command to run Odoo (replace with your specific command if needed)
-CMD ["python", "/mnt/odoo/odoo-bin", "-c", "/mnt/odoo/debian/odoo.conf"]
+CMD ["python", "/mnt/odoo/odoo/odoo-bin", "-c", "/mnt/odoo/odoo/debian/odoo.conf"]
