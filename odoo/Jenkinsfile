@@ -22,7 +22,8 @@ pipeline {
                     // Build the Docker image
                     echo "Building Docker image..."
                     sh 'ls -la'
-                    sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
+                    sh 'docker build -f odoo/Dockerfile -t $DOCKER_IMAGE:$DOCKER_TAG odoo'
+
                 }
             }
         }
