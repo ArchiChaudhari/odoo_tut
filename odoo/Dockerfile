@@ -7,27 +7,13 @@ ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL C.UTF-8
 
 # Install system dependencies
-RUN apt-get update 
-RUN apt-get install -y \
-    build-essential \
-    python3-dev \
-    cython \
-    libxml2-dev \
-    libxslt1-dev \
-    zlib1g-dev \
-    libsasl2-dev \
-    libldap2-dev \
-    libssl-dev \
-    libmysqlclient-dev \
-    libjpeg-dev \
-    libjpeg8-dev \
-    liblcms2-dev \
-    libblas-dev \
-    libatlas-base-dev \
-    libpq-dev \
-    git \
-    nano \
-    && rm -rf /var/lib/apt/lists/*
+RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/lock /var/lib/dpkg/lock*
+
+# Ensure the package list is updated and force repositories to be refreshed
+RUN echo "deb http://archive.ubuntu.com/ubuntu focal main universe" > /etc/apt/sources.list 
+RUN apt-get update
+
+
 # Set the working directory inside the container
 WORKDIR /mnt/odoo
 
