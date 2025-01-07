@@ -2,9 +2,9 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_IMAGE = 'your_dockerhub_username/odoo_tut'  // Change this to your Docker Hub image name
+        DOCKER_IMAGE = 'archichaudhari/odoo_tut'  // Change this to your Docker Hub image name
         DOCKER_TAG = 'latest'  // Docker tag (can also be a dynamic version like Git commit)
-        DOCKER_CREDENTIALS = 'dockerhub_credentials'  // Jenkins credentials ID for Docker Hub login
+        DOCKER_CREDENTIALS = 'docker_hub_credentialss'  // Jenkins credentials ID for Docker Hub login
         REGISTRY_URL = 'https://index.docker.io/v1/'  // Docker Hub registry URL
     }
 
