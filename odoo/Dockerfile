@@ -9,12 +9,13 @@ ENV LC_ALL C.UTF-8
 # Install system dependencies
 # Add missing GPG keys and update package lists
 # Add missing GPG keys and update package lists
-RUN apt-get update && apt-get install -y gnupg && \
+RUN apt-get update && apt-get install -y gnupg curl && \
     mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3B4FE6ACC0B21F32 | gpg --dearmor -o /etc/apt/keyrings/ubuntu-keyring.gpg && \
-    curl -fsSL https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920D1991BC93C | gpg --dearmor -o /etc/apt/keyrings/ubuntu-keyring2.gpg && \
+    curl -fsSL https://keyserver.ubuntu.com/keys/3B4FE6ACC0B21F32 | gpg --dearmor -o /etc/apt/keyrings/ubuntu-keyring.gpg && \
+    curl -fsSL https://keyserver.ubuntu.com/keys/871920D1991BC93C | gpg --dearmor -o /etc/apt/keyrings/ubuntu-keyring2.gpg && \
     echo "deb [signed-by=/etc/apt/keyrings/ubuntu-keyring.gpg] http://archive.ubuntu.com/ubuntu focal main universe" > /etc/apt/sources.list && \
     apt-get update
+
 
 RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/lock /var/lib/dpkg/lock*
 
