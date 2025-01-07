@@ -1,58 +1,74 @@
 pipeline {
     agent any
-
+    
     environment {
-        DOCKER_IMAGE = 'my-odoo-app'
-        DOCKER_TAG = 'latest'
-        REGISTRY = 'your-docker-registry'
-        APP_PORT = '8069'
+        DOCKER_IMAGE = 'your_dockerhub_username/odoo_tut'  // Change this to your Docker Hub image name
+        DOCKER_TAG = 'latest'  // Docker tag (can also be a dynamic version like Git commit)
+        DOCKER_CREDENTIALS = 'dockerhub_credentials'  // Jenkins credentials ID for Docker Hub login
+        REGISTRY_URL = 'https://index.docker.io/v1/'  // Docker Hub registry URL
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                // Clone the Odoo application repository
-                git branch: 'main', url: 'https://your-repository-url.git'
+                // Checkout the source code from Git repository
+                git 'https://github.com/ArchiChaudhari/odoo_tut.git'  // Replace with your GitHub repo URL
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .'
+                    // Build the Docker image
+                    echo "Building Docker image..."
+                    sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
                 }
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Login to Docker Hub') {
             steps {
                 script {
-                    // Login to Docker registry and push the image
-                    sh 'docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${REGISTRY}'
-                    sh 'docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}'
-                    sh 'docker push ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}'
+                    // Login to Docker Hub
+                    echo "Logging in to Docker Hub..."
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $REGISTRY_URL'
+                    }
                 }
             }
         }
 
-        stage('Deploy Application') {
+        stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    // Stop any existing container and deploy the new image
-                    sh '''
-                    docker stop odoo-container || true
-                    docker rm odoo-container || true
-                    docker run -d --name odoo-container -p ${APP_PORT}:${APP_PORT} ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
-                    '''
+                    // Push the image to Docker Hub
+                    echo "Pushing Docker image to Docker Hub..."
+                    sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
+                }
+            }
+        }
+
+        stage('Deploy Odoo Container') {
+            steps {
+                script {
+                    // Deploy the Odoo container (you can modify this to fit your deployment setup)
+                    echo "Deploying Odoo container..."
+                    sh """
+                    docker stop odoo-tut-container || true
+                    docker rm odoo-tut-container || true
+                    docker run -d -p 8069:8069 --name odoo-tut-container $DOCKER_IMAGE:$DOCKER_TAG
+                    """
                 }
             }
         }
     }
 
     post {
-        always {
-            // Clean up dangling Docker images
-            sh 'docker system prune -f'
+        success {
+            echo "Odoo app successfully deployed!"
+        }
+        failure {
+            echo "There was an error during the deployment process."
         }
     }
 }
