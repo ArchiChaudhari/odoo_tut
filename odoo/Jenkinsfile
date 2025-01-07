@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'my-odoo-app'
+        DOCKER_TAG = 'latest'
+        REGISTRY = 'your-docker-registry'
+        APP_PORT = '8069'
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                // Clone the Odoo application repository
+                git branch: 'main', url: 'https://your-repository-url.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh 'docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Login to Docker registry and push the image
+                    sh 'docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${REGISTRY}'
+                    sh 'docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}'
+                    sh 'docker push ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}'
+                }
+            }
+        }
+
+        stage('Deploy Application') {
+            steps {
+                script {
+                    // Stop any existing container and deploy the new image
+                    sh '''
+                    docker stop odoo-container || true
+                    docker rm odoo-container || true
+                    docker run -d --name odoo-container -p ${APP_PORT}:${APP_PORT} ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up dangling Docker images
+            sh 'docker system prune -f'
+        }
+    }
+}
